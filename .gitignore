@@ -4,3 +4,4 @@ backup
 chroma
 .venv
 __pycache__
+.ragvenv
