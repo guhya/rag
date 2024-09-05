@@ -1,5 +1,6 @@
 # eWIDE.AI
 
+## Text Model
 - Read PDF from directory
 - Parse and split PDF into multiple chunks
 - A chunk is tagged with {document_name}{page}{chunk_number}
@@ -7,3 +8,8 @@
 - When user input is recieved, issue query to chroma DB to find all suitables chunk to send to LLM
 - Use chunks as context, and together with input to from a prompt
 - LLM should response with the context
+
+## Image Model
+- Read image
+- Transform into Base64 Encoding
+- Caption image with multimodal model

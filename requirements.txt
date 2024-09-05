@@ -6,3 +6,4 @@ boto3
 langchain_community
 langchain_chroma
 Pillow
+mysql-connector-python

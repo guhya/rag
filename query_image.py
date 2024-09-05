@@ -6,9 +6,13 @@ import base64
 from io import BytesIO
 
 PROMPT_TEMPLATE = """
+You are a programmer and coding assistant.
+
 {question}
 
-Describe the answer in at least 5 bullet points.
+Describe the answer with 5 bullet points or more.
+If there is text in the picture, spell it.
+Translate the answer into Korean Language.
 """
 
 
