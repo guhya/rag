@@ -12,8 +12,7 @@ from langchain.prompts import ChatPromptTemplate
 from get_embedding_function import get_embedding_function
 
 
-CHROMA_PATH = "chroma_mysql"
-DATA_PATH = "data"
+CHROMA_PATH = "chroma_film"
 
 # Setup MySQL and Chroma DB
 mysql_conn = mysql.connector.connect(
@@ -52,7 +51,7 @@ def main():
 def load_documents():
 
     cursor = mysql_conn.cursor()
-    cursor.execute("SELECT film_id, title, description FROM film")
+    cursor.execute("SELECT film_id, title, description FROM film WHERE film_id < 100")
     
     docs = []
     for film_id, title, description in cursor.fetchall():
@@ -75,7 +74,7 @@ def generate_descriptions():
     model = Ollama(model="llama3.1:8b-instruct-q8_0")
 
     cursor = mysql_conn.cursor()
-    cursor.execute("SELECT film_id, title FROM film WHERE film_id IN (85, 528)")
+    cursor.execute("SELECT film_id, title FROM film")
     
     update_sql = "UPDATE film SET description = %s WHERE film_id = %s"
     for film_id, title in cursor.fetchall():
@@ -108,9 +107,9 @@ def split_documents(documents: list[Document]):
 
 def add_to_chroma(chunks: list[Document]):
     # Load the existing database.
-    db = Chroma(
-        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
-    )
+    db = Chroma(persist_directory=CHROMA_PATH
+                , embedding_function=get_embedding_function()
+                , collection_metadata={"hnsw:space": "cosine"})
 
     # Calculate chunk_id metadata.
     chunks_with_ids = calculate_chunk_ids(chunks)
