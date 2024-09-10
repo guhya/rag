@@ -21,26 +21,65 @@ mysql_conn = mysql.connector.connect(
 
 
 PROMPT_TEMPLATE = """
-Provide the response based only on the following context:
-{context}
+Summarize each movie below into a paragraph, do not add or remove another content:
 
-Explain why the description fit the question below:
-{question}
+{context}
 
 ---
 
-Respond only with valid JSON. Do not write an introduction or summary.
-Do not change the value of other fields.
-Only change the value of llm_summary field with the list of token found in the description which are related to the question.
-Separate each token by comma.
-Here is an example output: 
-{{
-    "film_id": 60,
-    "score": 0.4038965702056885,
-    "title": "BEAST HUNCHBACK",
-    "llm_summary": ""
-}},
+Generate your response in JSON, with id included in the JSON object.
 """
+
+
+PROMPT_TEMPLATE_JSON = """
+Respond only with valid JSON. Do not write an introduction or summary.
+
+Here is an example input:
+[
+    {{
+        "film_id": 60,
+        "score": 0.4038965702056885,
+        "title": "BEAST HUNCHBACK",
+        "description": "Description about the movie",
+        "llm_summary": null
+    }},
+    {{
+        "film_id": 66,
+        "score": 0.39951908588409424,
+        "title": "BENEATH RUSH",
+        "description": "Description about the movie",
+        "llm_summary": null
+    }}
+]
+
+Here is an example output: 
+[
+    {{
+        "film_id": 60,
+        "score": 0.4038965702056885,
+        "title": "BEAST HUNCHBACK",
+        "description": "Description about the movie",
+        "llm_summary": "Summary generated from movie description"
+    }},
+    {{
+        "film_id": 66,
+        "score": 0.39951908588409424,
+        "title": "BENEATH RUSH",
+        "description": "Description about the movie",
+        "llm_summary": "Summary generated from movie description"
+    }}
+]
+
+Here is the real input:
+
+{context}
+
+Do not add or remove item from the list input.
+Examine each item and write short summary explaining why this item fits the description of this question : {question}
+Put the summary in llm_summary field.
+
+"""
+
 
 def main():
     # Create CLI.
@@ -106,7 +145,7 @@ def query_rag(query_text: str, send_to_llm: bool):
 
     # Send to LLM if flag is set
     if send_to_llm:
-        formatted_response = call_ollama_with(doc_list_final[0], query_text)
+        formatted_response = call_ollama_with_json(doc_list_final, query_text)
 
     print(formatted_response)
     return formatted_response
@@ -136,10 +175,33 @@ def generate_context(combined_docs_sorted: list):
     
     return context_text
 
-def call_ollama_with(film: FilmScore, query_text: str):
+def call_ollama_with_text(db, doc_set: set, query_text: str):
+    # Define the metadata criteria
+    metadata_criteria = {"mysql_id": { "$in" : list(doc_set)}}
+    print(f"Get all vectors with all the film_id from vector metadata.. : {metadata_criteria}")
+    retriever = db.get(where=metadata_criteria)
+    docs = retriever.get("documents")
+    metadatas = retriever.get("metadatas")
+
+    combined_docs_sorted = combine_and_sort(docs, metadatas)
+    print(f"Combine metadata and content into one list...")
+
+    context_text = generate_context(combined_docs_sorted)
+    print(f"Generate a context information from the list...")
+    
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-    context_text = film.to_str()
-    context_text = context_text.replace("\"", "`")
+    prompt = prompt_template.format(context=context_text, question=query_text)
+    print(f"Sending prompt to LLM.. {prompt}")
+
+    model = Ollama(model="llama3.1:8b-instruct-q8_0",temperature = 0.0)
+    response_text = model.invoke(prompt)
+    formatted_response = f"Response: {response_text}\n\nSources: {doc_set}"
+    return formatted_response
+
+def call_ollama_with_json(doc_list_final: list, query_text: str):
+    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE_JSON)
+    json_array = json.dumps([obj.to_dict() for obj in doc_list_final], indent=4)
+    context_text = f"{json_array}"
 
     prompt = prompt_template.format(context=context_text, question=query_text)
     print(f"Sending prompt to LLM.. {prompt}")

@@ -31,3 +31,6 @@ class FilmScore:
             , "description": self.description
             , "llm_summary": self.llm_summary
         }
+    
+    def to_str(self):
+        return f"film_id={self.film_id}, score={self.score}, title={self.title}, description={self.description}"
