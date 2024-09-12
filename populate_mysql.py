@@ -51,7 +51,7 @@ def main():
 def load_documents():
 
     cursor = mysql_conn.cursor()
-    cursor.execute("SELECT film_id, title, description FROM film WHERE film_id < 100")
+    cursor.execute("SELECT film_id, title, description FROM film WHERE film_id")
     
     docs = []
     for film_id, title, description in cursor.fetchall():
