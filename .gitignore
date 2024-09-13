@@ -1,7 +1,7 @@
 *.pyc
 .DS_Store
 backup
-chroma
 .venv
 __pycache__
 .ragvenv
+log
