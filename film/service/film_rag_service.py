@@ -1,43 +1,75 @@
 import logging
+import mysql.connector
 
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 
 from film.io.film_score import FilmScore
 from film.service import film_search_service
+from film.service import film_keyword_extractor
 
 # Global variable start
+mysql_conn = mysql.connector.connect(
+    host="localhost",
+    user="sakila",
+    password="sakila",
+    database="sakila"
+)
+
 logger = logging.getLogger(__name__)
 
 PROMPT_TEMPLATE = """
-Provide the response based only on the following context:
+You are a helpful assistant who will judge that movies listed below are related to the user provided keywords or not.
+Here is the description of the movies :
+
 {context}
 
 Explain why the description fit the question below:
 {question}
 
----
-
 Respond only with valid JSON. Do not write an introduction or summary.
-Do not change the value of other fields.
-Only change the value of llm_summary field with the list of token found in the description which are related to the question, and describe them in short sentence.
-Separate each token by comma.
 Here is an example output: 
-{{
-    "film_id": 60,
-    "score": 0.4038965702056885,
-    "title": "FILM TITLE",
-    "llm_summary": ""
-}},
+[
+    {{
+        "film_id": 60,
+        "score": 0.4038965702056885,
+        "title": "FILM TITLE",
+        "related" : "No"
+        "llm_summary": ""
+    }},
+]
+
+If you think the movie is not related to the question, write 'No' in 'related' field, otherwise write 'Yes'.
+In 'llm_summary' field, write short description why this movie is related to the question above.
 """
 # Global variable ends
 
 def film_rag(query_text: str):
     """Add additional context to a keywords to enhance result"""
     
-    results = film_search_service.film_search(query_text)
-    logger.debug(f"Param : {results[0]}")
-    formatted_response = call_ollama_with(results[0], query_text)
+    # Get keywords describing more details of user query
+    keywords = film_keyword_extractor.film_get_keywords(query_text)
+    logger.info(f"Extracted keywords [{keywords}]")
+
+    chroma_results = film_search_service.film_search(keywords)    
+    if len(chroma_results) < 1:
+        logger.error("Data not found")
+
+    film_id = chroma_results[0].film_id
+    
+    # Get additional data from MySQL, add it to the dict
+    cursor = mysql_conn.cursor(dictionary=True)
+    qry = f"SELECT film_id, title, description FROM film WHERE film_id IN ({film_id})"
+    cursor.execute(qry)    
+    resultset = cursor.fetchall()
+    for rs in resultset:
+        chroma_results[0].title = rs["title"]
+        chroma_results[0].description = rs["description"]
+    cursor.close()
+
+    user_query = query_text + ". " + keywords
+    logger.debug(f"User query : {user_query}")
+    formatted_response = call_ollama_with(chroma_results[0], user_query)
 
     return formatted_response
 
@@ -59,3 +91,6 @@ def call_ollama_with(film: FilmScore, query_text: str):
     formatted_response = f"Response: {response_text}"
 
     return formatted_response
+
+def search_mysql(keywords):
+    return ""

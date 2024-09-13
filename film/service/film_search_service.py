@@ -1,7 +1,4 @@
 import logging
-import mysql.connector
-
-from langchain_chroma import Chroma
 
 from utils import ew_embedding_util
 from film.io.film_score import FilmScore
@@ -9,13 +6,6 @@ from film.io.film_score import FilmScore
 # Global variable start
 db = ew_embedding_util.get_chroma_db("chroma_film")
 logger = logging.getLogger(__name__)
-mysql_conn = mysql.connector.connect(
-    host="localhost",
-    user="sakila",
-    password="sakila",
-    database="sakila"
-)
-
 # Global variable ends
 
 def film_search(query_text: str):
@@ -23,6 +13,7 @@ def film_search(query_text: str):
 
     # Search the DB.
     k = 20
+    threshold = 0.4
     logger.debug(f"Querying vector stores with top [{k}] : {query_text}")
     results = db.similarity_search_with_score(query_text, k)
 
@@ -47,17 +38,6 @@ def film_search(query_text: str):
     doc_dict = dict()
     for item in doc_set:
         doc_dict[item.film_id] = item
-
-    # Get additional data from MySQL, add it to the dict
-    cursor = mysql_conn.cursor(dictionary=True)
-    film_id_str = ",".join(map(str, film_id_set))
-    qry = f"SELECT film_id, title, description FROM film WHERE film_id IN ({film_id_str})"
-    cursor.execute(qry)    
-    resultset = cursor.fetchall()
-    for rs in resultset:
-        doc_dict[rs["film_id"]].title = rs["title"]
-        doc_dict[rs["film_id"]].description = rs["description"]
-    cursor.close()
 
     # Convert dictionary to list and sort again descendingly 
     doc_list_final = sorted(list(doc_dict.values()), key=lambda fs: fs.score, reverse=True)
