@@ -7,15 +7,10 @@ from langchain_community.llms.ollama import Ollama
 from film.io.film_score import FilmScore
 from film.service import film_search_service
 from film.service import film_keyword_extractor
+from utils import ew_mysql_util
 
 # Global variable start
-mysql_conn = mysql.connector.connect(
-    host="localhost",
-    user="sakila",
-    password="sakila",
-    database="sakila"
-)
-
+mysql_conn = ew_mysql_util.get_mysql_conn()
 logger = logging.getLogger(__name__)
 
 PROMPT_TEMPLATE = """
@@ -46,30 +41,27 @@ In 'llm_summary' field, write short description why this movie is related to the
 
 def film_rag(query_text: str):
     """Add additional context to a keywords to enhance result"""
-    
-    # Get keywords describing more details of user query
-    keywords = film_keyword_extractor.film_get_keywords(query_text)
-    logger.info(f"Extracted keywords [{keywords}]")
 
-    chroma_results = film_search_service.film_search(keywords)    
-    if len(chroma_results) < 1:
-        logger.error("Data not found")
+    semantic_search_results = film_search_service.film_search(query_text)
 
-    film_id = chroma_results[0].film_id
+    # Get first data to send to LLM
+    keywords = semantic_search_results["keywords"] 
+    film = semantic_search_results["results"][0]
     
     # Get additional data from MySQL, add it to the dict
     cursor = mysql_conn.cursor(dictionary=True)
-    qry = f"SELECT film_id, title, description FROM film WHERE film_id IN ({film_id})"
+    qry = f"SELECT film_id, title, description FROM film WHERE film_id IN ({film.film_id})"
     cursor.execute(qry)    
     resultset = cursor.fetchall()
     for rs in resultset:
-        chroma_results[0].title = rs["title"]
-        chroma_results[0].description = rs["description"]
+        film.title = rs["title"]
+        film.description = rs["description"]
     cursor.close()
 
+    # Send to LLM
     user_query = query_text + ". " + keywords
     logger.debug(f"User query : {user_query}")
-    formatted_response = call_ollama_with(chroma_results[0], user_query)
+    formatted_response = call_ollama_with(film, user_query)
 
     return formatted_response
 
@@ -91,6 +83,3 @@ def call_ollama_with(film: FilmScore, query_text: str):
     formatted_response = f"Response: {response_text}"
 
     return formatted_response
-
-def search_mysql(keywords):
-    return ""

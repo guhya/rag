@@ -85,8 +85,8 @@ def main():
             parser.error("The 'search' operation requires --prompt arguments")
 
         if args.type is None:
-            results = film_search_service.film_search(args.prompt)
-            logger.debug(f"Found [{len(results)}] results {results}")
+            result = film_search_service.film_search(args.prompt)
+            logger.debug(f"Found [{len(result.results)}] results {result.results}")
         else:
             result = film_rag_service.film_rag(args.prompt)
             logger.debug(f"Response : \n{result}")
