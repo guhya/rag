@@ -23,7 +23,7 @@ Explain why the description fit the question below:
 {question}
 
 Respond only with valid JSON. Do not write an introduction or summary.
-Here is an example output: 
+Here is an example output when the movie is not related to the question : 
 [
     {{
         "film_id": 60,
@@ -34,10 +34,22 @@ Here is an example output:
     }},
 ]
 
+Here is an example output when the movie is related to the question : 
+[
+    {{
+        "film_id": 60,
+        "score": 0.4038965702056885,
+        "title": "FILM TITLE",
+        "related" : "Yes"
+        "llm_summary": "This movie has the plot and the element that you are describing"
+    }},
+]
+
 If you think the movie is not related to the question, write 'No' in 'related' field, otherwise write 'Yes'.
 In 'llm_summary' field, write short description why this movie is related to the question above.
 """
 # Global variable ends
+
 
 def film_rag(query_text: str):
     """Add additional context to a keywords to enhance result"""
@@ -78,7 +90,7 @@ def call_ollama_with(film: FilmScore, query_text: str):
 
     # llama3.1:70b-instruct-q2_k
     # llama3.1:8b-instruct-q8_0
-    model = Ollama(model="llama3.1:8b-instruct-q8_0",temperature = 0.7)
+    model = Ollama(model="llama3.1:8b-instruct-q8_0",temperature = 0)
     response_text = model.invoke(prompt)
     formatted_response = f"Response: {response_text}"
 

@@ -14,6 +14,7 @@ MYSQL_WEIGHT = 0.3
 CHROMA_WEIGHT = 0.7
 # Global variable ends
 
+
 def film_search(query_text: str):
     """
     Semantically search data with the provided keywords.
@@ -76,6 +77,7 @@ def film_search(query_text: str):
 
     result = {"keywords": keywords, "results": combined_scores}
     return result
+
 
 def extract_keywords(query_text: str):
     """Extract keywords from query text"""

@@ -10,6 +10,7 @@ db = ew_embedding_util.get_chroma_db("chroma_film")
 logger = logging.getLogger(__name__)
 # Global variable ends
 
+
 def insert_item(id, payload):
     """Insert a new item """
     

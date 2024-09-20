@@ -9,6 +9,7 @@ db = ew_embedding_util.get_chroma_db("chroma_film")
 logger = logging.getLogger(__name__)
 # Global variable ends
 
+
 def list_items(ids):
     """List all items in the data_list."""
     

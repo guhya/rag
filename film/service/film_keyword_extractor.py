@@ -13,11 +13,13 @@ logger = logging.getLogger(__name__)
 PROMPT_TEMPLATE = """
 I am running a movie database service, a user enter this in a search query: {question}
 
-Give me set of 10 keywords, comma separated,  which might be related to above question.
-Here is an example output: movies, beautiful, singer, music, performance, talent, vocalist, film, artist, musical
+Give me set of minimum 5 keywords, comma separated, which might be related to above question.
+Make sure to only include the most relevant keywords.
+Here is an example output of movie with the female singer in it: beautiful, singer, music, performance, talent, vocalist, film, artist, musical
 Do not write an introduction or summary in your response.
 """
 # Global variable ends
+
 
 def film_get_keywords(query_text: str):
     """Keyword extractors"""

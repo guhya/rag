@@ -1,24 +1,16 @@
 import logging
-import argparse
-import mysql.connector
 
 from langchain.schema.document import Document
 
 from utils import ew_embedding_util
+from utils import ew_mysql_util
 
 
 # Global variable start
 db = ew_embedding_util.get_chroma_db("chroma_film")
+mysql_conn = ew_mysql_util.get_mysql_conn()
 logger = logging.getLogger(__name__)
 # Global variable ends
-
-# Setup MySQL and Chroma DB
-mysql_conn = mysql.connector.connect(
-    host="localhost",
-    user="sakila",
-    password="sakila",
-    database="sakila"
-)
 
 def main():    
     # Load into chroma one by one
