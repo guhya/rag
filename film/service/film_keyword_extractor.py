@@ -1,11 +1,8 @@
 import logging
-import mysql.connector
 
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 
-from film.io.film_score import FilmScore
-from film.service import film_search_service
 
 # Global variable start
 logger = logging.getLogger(__name__)

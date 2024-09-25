@@ -1,0 +1,17 @@
+builder = StateGraph(State)
+builder.add_node("prompt_assistant", Assistant(prompt_assistant))
+builder.add_node("primary_assistant", Assistant(primary_assistant))
+builder.add_node("tools", create_tool_node_with_fallback(primary_tools))
+builder.add_node("fetch_user_info", get_user_info)
+
+builder.add_edge("__start__", "fetch_user_info")
+builder.add_edge("fetch_user_info", "prompt_assistant")
+builder.add_conditional_edges(
+    "prompt_assistant",
+    should_use_primary,
+)
+builder.add_conditional_edges(
+    "primary_assistant",
+    should_use_tools,
+)
+builder.add_edge("tools", "primary_assistant")

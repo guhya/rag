@@ -7,3 +7,5 @@ langchain_community
 langchain_chroma
 Pillow
 mysql-connector-python
+langgraph
+langchain_ollama
