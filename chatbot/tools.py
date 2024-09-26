@@ -13,7 +13,7 @@ def get_school_picture(id: str):
     Query mysql database to get the picture based on id
 
     Args:
-        id: The id of the school
+        id: An integer id of the school
 
     Returns:
         The path of the pictures of that particular id
@@ -21,8 +21,9 @@ def get_school_picture(id: str):
     """
 
     path = "~/Downloads/1.jpg"
+    response = f"The school picture is saved in: {path}"
 
-    return [path]
+    return response
 
 tool_registry = {}
 tool_registry["get_school_picture"] = get_school_picture
