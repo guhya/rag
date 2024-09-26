@@ -25,6 +25,9 @@ class Assistant:
         
         llm = prompt | llm.bind_tools(selected_tools)
         result = llm.invoke(state)
-        return {"messages": result}
+        if not result.tool_calls:
+            return {"generation": result.content}
+        else:
+            return {"generation": "tool_calls", "messages": result}
 
 
