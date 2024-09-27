@@ -25,9 +25,12 @@ class Assistant:
         
         llm = prompt | llm.bind_tools(selected_tools)
         result = llm.invoke(state)
+        logger.debug(f"### Result ... \n{result}")
         if not result.tool_calls:
-            return {"generation": result.content}
+            logger.debug(f"### Normal calls... ")
+            return {"generation": result.content}            
         else:
+            logger.debug(f"### Tool calls... ")
             return {"generation": "tool_calls", "messages": result}
 
 

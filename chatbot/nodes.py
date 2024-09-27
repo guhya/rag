@@ -23,7 +23,9 @@ def get_user_info(state: State):
     
     
 def prepare_tools(state: State):
-    prompt_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0)
+    # llama3.2:3b-instruct-q8_0
+    # llama3.1:8b-instruct-q8_0
+    prompt_llm = ChatOllama(model="llama3.2:3b-instruct-q8_0", temperature = 0)
     agent_prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -34,63 +36,50 @@ def prepare_tools(state: State):
                 - If you does not need to use tool call or external resources, write your reasoning.
 
                 Here are some examples of prompt that typically require a tool_call:
-                1. Personal data: Prompts about specific personal information, such as:
                     - What's my age?
-                    - Where do I live?
-                    - What's my email address?
-                2. Location-based queries: Prompts that rely on current or real-time location information, such as:
-                    - What's the weather like in [city] today?
                     - What's the traffic situation in [location] right now?
-                    - Is it cloudy today?
-                3. Real-time data: Prompts that require up-to-date or dynamic data, such as:
-                    - What are the latest sports scores?
                     - What's the current stock price of [company]?
                     - Find me picture of a teacher with id [2].
                     - Find me picture of Mr. Argus
-                4. External services: Prompts that rely on external resources, APIs or services, such as:
-                    - Can you translate this text from English to Spanish?
-                    - Can you summarize this article for me?
-
 
                 On the other hand, here are some examples of Prompts that typically do not require a Tool Call:
-
-                1. General knowledge: Prompts about general information, such as:
                     - What's the capital of France?
-                    - Who wrote the book "To Kill a Mockingbird"?
-                2. Fictional or hypothetical scenarios: Prompts that involve fictional characters, places, or situations, such as:
-                    - What would happen if Harry Potter were to defeat Voldemort?
                     - How would you write a story about a character who can fly?
-                3. Abstract concepts: Prompts that explore abstract ideas or philosophical topics, such as:
-                    - What is the nature of consciousness?
                     - Is it possible for humans to live in space?
                 
-                Asses only the last message if it needs a tool calls with the provided context.                
                 \n\nCurrent user:\n<User>\n{user_info}\n</User>"            
                 \nCurrent time: {time}.
                 """
             ),
-            ("placeholder", "{messages}")
+            ("human", "Asses this prompt: \n\n {user_prompt}")
         ]
     )
+    question = state["messages"][-1].content
+    logger.debug(f"### User prompt: [{question}]")
     agent_prompt = agent_prompt.partial(time=datetime.now())
+    agent_prompt = agent_prompt.partial(user_prompt=question)
     prompt_llm = agent_prompt | prompt_llm
     result = prompt_llm.invoke(state)
     logger.debug(f"##### Prepare tools result: [{result}]")
     if "use_tools" != result.content:
-        return {"selected_tools": []}    
+        return {"question": question, "selected_tools": []}    
     else:    
-        return {"selected_tools": ["get_school_picture"]}    
+        tool_list = [key for key in tool_registry.keys()]
+        logger.debug(f"{tool_list}")
+        return {"question": question, "selected_tools": tool_list}    
 
 
 def answer_grader(state: State):
-    answer_grader_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0)
+    # llama3.2:3b-instruct-q8_0
+    # llama3.1:8b-instruct-q8_0
+    answer_grader_llm = ChatOllama(model="llama3.2:3b-instruct-q8_0", temperature = 0)
     agent_prompt = ChatPromptTemplate.from_messages(
         [
             (
                 "system",
                 """
                 You are a grader assessing whether an answer addresses / resolves the last question in the conversation.
-                Given the conversation as the context, respond with 'yes' if the answer resolves or addresses the question related to the school and education.
+                Given the conversation as the context, respond with binary ['yes', 'no']. 'yes' if the answer resolves or addresses the question related to the school and education.
                 School finding activity might include greeting and small talk.
                 
                 Do not write anything else except 'yes' or 'no' in your response.                
@@ -114,19 +103,16 @@ def answer_grader(state: State):
 
                 Current user: <User>{user_info}</User>"            
                 Current time: {time}.
-                The question: {question}
-                The answer: {generation}.
-                The full conversation history:                
                 """
             ),
-            MessagesPlaceholder(variable_name="messages")
+            ("human", "The question: \n\n {question} \n\n The answer: {generation}")
         ]
     )
     agent_prompt = agent_prompt.partial(time=datetime.now())
-    question = state["messages"][-1].content
+    question = state["question"]
     agent_prompt = agent_prompt.partial(question=question)
     generation = state["generation"]
-    agent_prompt = agent_prompt.partial(generation=generation)
+    agent_prompt = agent_prompt.partial(generation=generation)    
     
     answer_grader_llm = agent_prompt | answer_grader_llm
     result = answer_grader_llm.invoke(state)

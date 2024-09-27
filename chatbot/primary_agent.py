@@ -9,7 +9,8 @@ from chatbot.nodes import *
 
 # llama3.1:70b-instruct-q2_k
 # llama3.1:8b-instruct-q8_0
-primary_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 1)
+# llama3.2:3b-instruct-q8_0
+primary_llm = ChatOllama(model="llama3.2:3b-instruct-q8_0", temperature = 1)
 primary_prompt = ChatPromptTemplate.from_messages(
     [
         (
@@ -32,10 +33,12 @@ primary_prompt = ChatPromptTemplate.from_messages(
             - Hello Ms
             
             You will be given tools to choose from should you need it to complete the answer.
-            If the tools is not suitable with the prompt, do not use it.
-            If you do not have tools to choose from, do not use or generate new tool.
-            When you get the result from using the tools, do not modify the result.
-            Do not provide any information about what tools you use to answer the prompt.
+            
+            Reminder:
+            - Do not use tools that are not suitable to answer the question.
+            - When you get the result from using the tools, do not modify the result.
+            - Do not provide any information about what tools you use to answer the prompt.
+            
             \n\nCurrent user:\n<User>\n{user_info}\n</User>"            
             \nCurrent time: {time}.
             """

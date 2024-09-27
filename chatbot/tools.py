@@ -8,26 +8,59 @@ from langgraph.prebuilt import ToolNode
 # Each tools must include a docstring describing its purpose
 
 @tool
-def get_school_picture(id: str):
+def get_school_picture(school_id: str):
     """
     Query mysql database to get the picture based on id
 
     Args:
-        id: An integer id of the school
+        school_id: An integer id of the school
 
     Returns:
         The path of the pictures of that particular id
 
     """
 
-    path = "~/Downloads/1.jpg"
+    path = f"~/Downloads/school_picture_{school_id}_2024.jpg"
     response = f"The school picture is saved in: {path}"
-
     return response
+
+@tool
+def delete_school_data(school_id: str):
+    """
+    Esecute mysql script to delete school information based on school id
+
+    Args:
+        school_id: An integer id of the school
+
+    Returns:
+        The deleted id
+
+    """
+
+    response = f"The school with id [{school_id}] is deleted."
+    return response
+
+@tool
+def get_weather_data(city: str):
+    """
+    Call API to get weather data for the input city
+
+    Args:
+        city: City name
+
+    Returns:
+        Weather information
+    """
+
+    response = f"Weather in {city} is sunny with a strong breeze"
+    return response
+
 
 tool_registry = {}
 tool_registry["get_school_picture"] = get_school_picture
-all_tools = [get_school_picture]
+tool_registry["delete_school_data"] = delete_school_data
+tool_registry["get_weather_data"] = get_weather_data
+all_tools = [value for value in tool_registry.values()]
 
 def handle_tool_error(state) -> dict:
     error = state.get("error")
