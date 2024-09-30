@@ -20,4 +20,5 @@ class State(TypedDict):
     user_info: str
     selected_tools: list[str]
     question: str
+    is_question_related: str
     generation: str        
