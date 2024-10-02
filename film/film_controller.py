@@ -86,7 +86,7 @@ def main():
 
         if args.type is None:
             result = film_search_service.film_search(args.prompt)
-            logger.debug(f"Found [{len(result.results)}] results {result.results}")
+            logger.debug(f"Found [{len(result["results"])}] results {result["results"]}")
         else:
             result = film_rag_service.film_rag(args.prompt)
             logger.debug(f"Response : \n{result}")

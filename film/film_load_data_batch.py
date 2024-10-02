@@ -7,7 +7,7 @@ from utils import ew_mysql_util
 
 
 # Global variable start
-db = ew_embedding_util.get_chroma_db("chroma_film")
+db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
 mysql_conn = ew_mysql_util.get_mysql_conn()
 logger = logging.getLogger(__name__)
 # Global variable ends
@@ -20,7 +20,7 @@ def main():
 def load_documents():
     """Read sql database and one by one insert into chroma"""
     cursor = mysql_conn.cursor()
-    cursor.execute("SELECT film_id, title, description FROM film WHERE film_id <= 1000")
+    cursor.execute("SELECT film_id, title, description FROM film_indonesia WHERE film_id <= 10000")
     
     for film_id, title, description in cursor.fetchall():
         str = f"Id: {film_id}\nTitle: {title}\nDescription: {description}\n"

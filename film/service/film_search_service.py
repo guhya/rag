@@ -6,7 +6,7 @@ from film.io.film_score import FilmScore
 from film.service import film_keyword_extractor
 
 # Global variable start
-db = ew_embedding_util.get_chroma_db("chroma_film")
+db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
 mysql_conn = ew_mysql_util.get_mysql_conn()
 logger = logging.getLogger(__name__)
 
@@ -74,6 +74,7 @@ def film_search(query_text: str):
     
     # Sort by combined score in descending order
     combined_scores.sort(key=lambda film: film.score, reverse=True)
+    logger.info(f"Final ordered results:\n{combined_scores}")
 
     result = {"keywords": keywords, "results": combined_scores}
     return result
@@ -94,7 +95,7 @@ def search_mysql(keywords: str):
             SELECT
                 film_id
                 , MATCH(title, description) AGAINST('{keywords}') AS score
-            FROM film
+            FROM film_indonesia
             WHERE MATCH(title, description) AGAINST('{keywords}')
             LIMIT 10
             """

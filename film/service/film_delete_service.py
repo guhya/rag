@@ -4,7 +4,7 @@ from utils import ew_embedding_util
 from film.service import film_get_service
 
 # Global variable start
-db = ew_embedding_util.get_chroma_db("chroma_film")
+db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
 logger = logging.getLogger(__name__)
 # Global variable ends
 

@@ -6,7 +6,7 @@ from film.service import film_insert_service
 from film.service import film_delete_service
 
 # Global variable start
-db = ew_embedding_util.get_chroma_db("chroma_film")
+db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
 logger = logging.getLogger(__name__)
 # Global variable ends
 

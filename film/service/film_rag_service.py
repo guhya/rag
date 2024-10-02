@@ -62,7 +62,7 @@ def film_rag(query_text: str):
     
     # Get additional data from MySQL, add it to the dict
     cursor = mysql_conn.cursor(dictionary=True)
-    qry = f"SELECT film_id, title, description FROM film WHERE film_id IN ({film.film_id})"
+    qry = f"SELECT film_id, title, description FROM film_indonesia WHERE film_id IN ({film.film_id})"
     cursor.execute(qry)    
     resultset = cursor.fetchall()
     for rs in resultset:

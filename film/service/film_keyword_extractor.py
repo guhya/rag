@@ -8,11 +8,13 @@ from langchain_community.llms.ollama import Ollama
 logger = logging.getLogger(__name__)
 
 PROMPT_TEMPLATE = """
-I am running a movie database service, a user enter this in a search query: {question}
+I am running a movie database service in Indonesian language, a user enter this in a search query: {question}
 
 Give me set of minimum 5 keywords, comma separated, which might be related to above question.
 Make sure to only include the most relevant keywords.
-Here is an example output of movie with the female singer in it: beautiful, singer, music, performance, talent, vocalist, film, artist, musical
+Make sure all keywords are in Indonesian language.
+
+Here is an example output of movie with the female singer in it: cantik, penyanyi, musik, pertunjukan, bakat, vokalis, film, artis, musikal
 Do not write an introduction or summary in your response.
 """
 # Global variable ends
