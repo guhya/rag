@@ -9,3 +9,4 @@ Pillow
 mysql-connector-python
 langgraph
 langchain_ollama
+streamlit

@@ -21,8 +21,7 @@ def get_school_picture(school_id: str):
     """
 
     path = f"~/Downloads/school_picture_{school_id}_2024.jpg"
-    response = f"The school picture is saved in: {path}"
-    return response
+    return {"school_id" : school_id, "path":path}
 
 @tool
 def delete_school_data(school_id: str):
@@ -37,8 +36,7 @@ def delete_school_data(school_id: str):
 
     """
 
-    response = f"The school with id [{school_id}] is deleted."
-    return response
+    return {"school_id" : school_id, "status" : "deleted"}
 
 @tool
 def get_weather_data(city: str):
@@ -52,8 +50,7 @@ def get_weather_data(city: str):
         Weather information
     """
 
-    response = f"Weather in {city} is sunny with a strong breeze"
-    return response
+    return {"city": city, "weather" : "Sunny"}
 
 
 tool_registry = {}

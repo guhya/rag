@@ -16,7 +16,7 @@ from langchain.globals import set_debug
 
 logger = logging.getLogger(__name__)
 
-set_debug(False)
+set_debug(True)
 
 
 def should_reask_prompt(state: State) -> Literal["prepare_tools", "__end__"]:
