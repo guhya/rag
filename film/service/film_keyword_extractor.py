@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 PROMPT_TEMPLATE = """
 I am running a movie database service in Indonesian language, a user enter this in a search query: {question}
 
-Give me set of minimum 5 keywords, comma separated, which might be related to above question.
+Give me set of keywords, comma separated, which might be related to above question.
 Make sure to only include the most relevant keywords.
 Make sure all keywords are in Indonesian language.
 

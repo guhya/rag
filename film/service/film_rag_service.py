@@ -29,8 +29,8 @@ Here is an example output when the movie is not related to the question :
         "film_id": 60,
         "score": 0.4038965702056885,
         "title": "FILM TITLE",
-        "related" : "No"
-        "llm_summary": ""
+        "binary_score" : "No"
+        "llm_summary": "This movie is not related with the prompt at all"
     }},
 ]
 
@@ -40,13 +40,13 @@ Here is an example output when the movie is related to the question :
         "film_id": 60,
         "score": 0.4038965702056885,
         "title": "FILM TITLE",
-        "related" : "Yes"
+        "binary_score" : "Yes"
         "llm_summary": "This movie has the plot and the element that you are describing"
     }},
 ]
 
-If you think the movie is not related to the question, write 'No' in 'related' field, otherwise write 'Yes'.
-In 'llm_summary' field, write short description why this movie is related to the question above.
+If you think the movie is not related to the question, write 'no' in 'binary_score' field, otherwise write 'yes'.
+In 'llm_summary' field, write short description in Indonesian language explaining your assesment.
 """
 # Global variable ends
 
