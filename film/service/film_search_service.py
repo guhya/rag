@@ -10,8 +10,8 @@ db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
 mysql_conn = ew_mysql_util.get_mysql_conn()
 logger = logging.getLogger(__name__)
 
-MYSQL_WEIGHT = 1
-CHROMA_WEIGHT = 0
+MYSQL_WEIGHT = 0.7
+CHROMA_WEIGHT = 0.3
 # Global variable ends
 
 

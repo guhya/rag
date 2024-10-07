@@ -55,7 +55,7 @@ def prompt_grader(state: State):
             (            
                 "human", 
                 """
-                Asses this prompt: {user_prompt}. based on following context: {conversation}
+                Asses this prompt: {user_prompt}. based on following context: {ai_answer}
                 Return JSON with three keys, 
                 binary_score is 'yes' or 'no' score to indicate that the last prompt is related to the Schoolfinder services. 
                 A key, explanation, that contains an explanation of the score.
@@ -71,6 +71,7 @@ def prompt_grader(state: State):
     logger.debug(f"### User prompt: [{question}]")
     agent_prompt = agent_prompt.partial(time=datetime.now())
     
+    # Get only the last answer from AI/Tools
     conversation = ""
     role = ""
     for msg in state["messages"]:

@@ -90,7 +90,8 @@ def call_ollama_with(film: FilmScore, query_text: str):
 
     # llama3.1:70b-instruct-q2_k
     # llama3.1:8b-instruct-q8_0
-    model = Ollama(model="llama3.1:8b-instruct-q8_0",temperature = 0)
+    # llama3.2:3b-instruct-q8_0
+    model = Ollama(model="llama3.2:3b-instruct-q8_0",temperature = 0)
     response_text = model.invoke(prompt)
     formatted_response = f"Response: {response_text}"
 
