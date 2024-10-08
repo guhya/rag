@@ -8,6 +8,7 @@ from film.service import film_update_service
 from film.service import film_delete_service
 from film.service import film_search_service
 from film.service import film_rag_service
+from film.agents.app import agent_rag
 
 # Global variable start
 logger = logging.getLogger(__name__)
@@ -44,7 +45,6 @@ def main():
     parser.add_argument("--id", type=str, help="ID or index for the operation")
     parser.add_argument("--payload", type=str, help="Payload for the operation")
     parser.add_argument("--prompt", type=str, help="Prompt for search operation")
-    parser.add_argument("--type", choices=["semantic", "rag"], help="Type of search, default to 'semantic'")
 
     # Parse arguments
     args = parser.parse_args()
@@ -84,12 +84,8 @@ def main():
         if args.prompt is None:
             parser.error("The 'search' operation requires --prompt arguments")
 
-        if args.type is None:
-            result = film_search_service.film_search(args.prompt)
-            logger.debug(f"Found [{len(result["results"])}] results {result["results"]}")
-        else:
-            result = film_rag_service.film_rag(args.prompt)
-            logger.debug(f"Response : \n{result}")
+        result = agent_rag(args.prompt)
+        logger.info(f"Found [{len(result)}] results {result}")
             
 
 if __name__ == "__main__":

@@ -46,7 +46,7 @@ def keyword_agent(state: State):
             )
         ]
     )    
-    ori_prompt = state["messages"][-1].content
+    ori_prompt = state["ori_prompt"]
     logger.debug(f"### User prompt: [{ori_prompt}]")
     agent_prompt = agent_prompt.partial(time=datetime.now())    
     agent_prompt = agent_prompt.partial(ori_prompt=ori_prompt)

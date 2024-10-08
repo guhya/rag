@@ -1,5 +1,6 @@
 import logging
 import uuid
+import json
 
 from typing import Literal
 
@@ -60,25 +61,20 @@ builder.add_edge("chroma_agent", "reranking_agent")
 builder.add_edge("reranking_agent", "evaluation_agent")
 builder.add_edge("evaluation_agent", "__end__")
 
-# The checkpointer lets the graph persist its state
-# this is a complete memory for the entire graph.
-memory = MemorySaver()
-app = builder.compile(checkpointer=memory)
-thread_id = str(uuid.uuid4())
-config = {
-    "configurable": {
-        "user_id": "anonymous",
-        "thread_id": thread_id,
+app = builder.compile()
+
+def agent_rag(user_prompt: str):
+    thread_id = str(uuid.uuid4())
+    config = {
+        "configurable": {
+            "user_id": "anonymous",
+            "thread_id": thread_id,
+        }
     }
-}
 
+    inputs = {"ori_prompt": user_prompt}
+    response = {}
+    for output in app.stream(inputs, config, stream_mode="values"):
+        response = output
 
-_printed = set()
-while True:
-    prompt = input("User: ")
-    if prompt.lower() in ["quit", "exit", "q"]:
-        logger.info("Goodbye!")
-        break
-
-    for event in app.stream({"messages": ("user", prompt)}, config, stream_mode="values"):
-        print_event(event, _printed)
+    return response["result_list"]

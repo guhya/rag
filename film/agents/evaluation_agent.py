@@ -47,7 +47,7 @@ def evaluation_agent(state: State):
                     Given the prompt: {user_prompt} and the item description: {description} assess if the description has the theme in the prompt.
                     Return JSON with two two keys, 
                     binary_score is 'yes' or 'no' score to indicate that the answer address the question. 
-                    And a key, explanation, that contains an explanation of the score.                
+                    And a key, explanation, that contains an explanation of the score in Indonesian language.                
                     """
                 )
             ]
@@ -60,8 +60,10 @@ def evaluation_agent(state: State):
         result = evaluation_llm.invoke(state)
         logger.debug(f"##### Evaluation agent result: \n[{result.content}] \nDescription: {item_description}")
         ai_response = json.loads(result.content)["binary_score"]
+        explanation = json.loads(result.content)["explanation"]
         if "yes" == ai_response:
             item["description"] = item_description
+            item["explanation"] = explanation
             result_list.append(item)
     
     return {

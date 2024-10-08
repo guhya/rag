@@ -5,17 +5,17 @@ from film.io.film_score import FilmScore
 
 logger = logging.getLogger(__name__)
 db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
-MYSQL_WEIGHT = 0.8
-CHROMA_WEIGHT = 0.2
+MYSQL_WEIGHT = 0.6
+CHROMA_WEIGHT = 0.4
 
 def reranking_agent(state: State):
     # Search MySQL
     mysql_results = state["mysql_list"]
-    logger.info(f"MySQL results:\n{mysql_results}")
+    logger.debug(f"MySQL results:\n{mysql_results}")
 
     # Search Chroma
     chroma_results = state["chroma_list"]
-    logger.info(f"Chroma results:\n{chroma_results}")
+    logger.debug(f"Chroma results:\n{chroma_results}")
 
     # Combine and sort by score
     # Create a dictionary for quick access to semantic scores
@@ -37,7 +37,7 @@ def reranking_agent(state: State):
     
     # Sort by combined score in descending order
     combined_scores.sort(key=lambda item: item["score"], reverse=True)
-    logger.info(f"### Final ordered results:\n{combined_scores}")
+    logger.debug(f"### Final ordered results:\n{combined_scores}")
 
     combined_list = list()
     for item in combined_scores:
