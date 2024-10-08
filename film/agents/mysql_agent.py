@@ -8,7 +8,7 @@ mysql_conn = ew_mysql_util.get_mysql_conn()
 
 def mysql_agent(state: State):
     ind_prompt = state["ind_prompt"]
-    keywords = ind_prompt + " " + state["keywords"]
+    keywords =  state["keywords"] + " " + ind_prompt
     
     cursor = mysql_conn.cursor(dictionary=True)
     qry = f"""

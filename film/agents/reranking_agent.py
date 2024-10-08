@@ -5,8 +5,8 @@ from film.io.film_score import FilmScore
 
 logger = logging.getLogger(__name__)
 db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
-MYSQL_WEIGHT = 0.6
-CHROMA_WEIGHT = 0.4
+MYSQL_WEIGHT = 0.8
+CHROMA_WEIGHT = 0.2
 
 def reranking_agent(state: State):
     # Search MySQL

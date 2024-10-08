@@ -14,23 +14,23 @@ logger = logging.getLogger(__name__)
 def keyword_agent(state: State):
     # llama3.2:3b-instruct-q8_0
     # llama3.1:8b-instruct-q8_0
-    prompt_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0, format="json")
+    prompt_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0.5, format="json")
     agent_prompt = ChatPromptTemplate.from_messages(
         [
             (
                 "system",
                 """
                 I am running a movie database service in Indonesian language where user can search movie based on prompt they entered.
-                The prompt is not descriptive enough and we need to transform it into comma separated keywords.
-                You will be a prompt assistant whose job is to extract keywords from the user prompt. 
+                You will be a prompt assistant whose job is to generate related keywords within the context of user prompt.
+                Take your time to understand the prompt properly before generating keywords.
+                Take into account whether the prompt is asking about overall movie theme or just part of it.
                 The keywords is comma separated text, which must be related to the prompt.                
 
                 Reminder:
-                - Make sure to only include the most relevant keywords.
-                - Make sure that the keywords are comma separated.
+                - The keywords should not make the context broader.
+                - The keywords should not contains 'movie' or 'film'.
                 - Make sure all keywords are in Indonesian language.            
                 - Return in plain text like for example: cantik, penyanyi, musik, pertunjukan
-                - Do not write an introduction or summary in your response. 
                 
                 Current time: {time}.
                 """
@@ -38,10 +38,10 @@ def keyword_agent(state: State):
             (            
                 "human", 
                 """
-                Given the prompt: {ori_prompt}, extract comma separated keywords related to this prompt.                
+                Given the prompt: {ori_prompt}, generate comma separated keywords very closely related with that context.                
                 Return JSON with two two keys, 
                 keywords: keywords extracted. 
-                And a key, translation, user prompt translated into Indonesian language.                
+                And a key, translation, user prompt translated into Indonesian language if necessary, if not just the original prompt.                
                 """
             )
         ]

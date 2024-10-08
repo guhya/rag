@@ -8,7 +8,7 @@ db = ew_embedding_util.get_chroma_db("chroma_film_indonesia")
 
 def chroma_agent(state: State):
     ind_prompt = state["ind_prompt"]
-    keywords = ind_prompt + " " + state["keywords"]
+    keywords =  state["keywords"] + " " + ind_prompt
     
     # Search the DB.
     k = 10
