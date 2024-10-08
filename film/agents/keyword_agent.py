@@ -55,7 +55,7 @@ def keyword_agent(state: State):
     logger.debug(f"##### Prompt agent result: [{result.content}]")
     keywords = json.loads(result.content)["keywords"]
     translation = json.loads(result.content)["translation"]
-    logger.debug(f"\n### Keywords: [{keywords}] \n### Translation: [{translation}]")
+    logger.info(f"\n### Keywords: [{keywords}] \n### Translation: [{translation}]")
     return {
             "ori_prompt": ori_prompt, 
             "ind_prompt": translation, 

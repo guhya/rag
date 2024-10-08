@@ -36,7 +36,7 @@ def evaluation_agent(state: State):
                     You will be a evaluator assistant whose job is to asses if the description matches the theme mentioned in the prompt.
                     
                     Score:
-                    A score of yes means that the item has the theme specified in the prompt, even if it is minor. 
+                    A score of yes means that the item has the theme specified in the prompt. 
                     Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct.
                     Current time: {time}.
                     """
@@ -46,7 +46,7 @@ def evaluation_agent(state: State):
                     """
                     Given the prompt: {user_prompt} and the item description: {description} assess if the description has the theme in the prompt.
                     Return JSON with two two keys, 
-                    binary_score is 'yes' or 'no' score to indicate that the answer address the question. 
+                    binary_score is 'yes' or 'no' score to indicate that the description has the theme mentioned in the prompt. 
                     And a key, explanation, that contains an explanation of the score in Indonesian language.                
                     """
                 )
@@ -58,7 +58,7 @@ def evaluation_agent(state: State):
         agent_prompt = agent_prompt.partial(description=item_description)
         evaluation_llm = agent_prompt | evaluation_llm
         result = evaluation_llm.invoke(state)
-        logger.debug(f"##### Evaluation agent result: \n[{result.content}] \nDescription: {item_description}")
+        logger.info(f"##### Evaluation agent result: \n[{result.content}] \nDescription: {item_description}")
         ai_response = json.loads(result.content)["binary_score"]
         explanation = json.loads(result.content)["explanation"]
         if "yes" == ai_response:

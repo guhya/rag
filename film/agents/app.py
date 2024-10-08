@@ -44,6 +44,8 @@ Here is how the search algorithm works:
     - Calculate weight of all list :
         [(msyql_weight * mysql + chroma_weight * chroma) for mysql, chroma in zip(normalized_mysql_scores, chroma_scores)]
     - Combine and sort
+    
+5. Evaluate top 5 recommended movies for relevancy
 """
 
 builder = StateGraph(State)
