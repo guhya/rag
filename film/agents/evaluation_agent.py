@@ -26,7 +26,7 @@ def evaluation_agent(state: State):
         logger.debug(f"### Get item description: [{item["item_id"]}]")
         # llama3.2:3b-instruct-q8_0
         # llama3.1:8b-instruct-q8_0
-        evaluation_llm = ChatOllama(model="llama3.2:3b-instruct-q8_0", temperature = 0, format="json")
+        evaluation_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0, format="json")
         agent_prompt = ChatPromptTemplate.from_messages(
             [
                 (

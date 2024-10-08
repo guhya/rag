@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def keyword_agent(state: State):
     # llama3.2:3b-instruct-q8_0
     # llama3.1:8b-instruct-q8_0
-    prompt_llm = ChatOllama(model="llama3.2:3b-instruct-q8_0", temperature = 0)
+    prompt_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0, format="json")
     agent_prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -39,6 +39,9 @@ def keyword_agent(state: State):
                 "human", 
                 """
                 Given the prompt: {ori_prompt}, extract comma separated keywords related to this prompt.                
+                Return JSON with two two keys, 
+                keywords: keywords extracted. 
+                And a key, translation, user prompt translated into Indonesian language.                
                 """
             )
         ]
@@ -50,10 +53,13 @@ def keyword_agent(state: State):
     prompt_llm = agent_prompt | prompt_llm
     result = prompt_llm.invoke(state)
     logger.debug(f"##### Prompt agent result: [{result.content}]")
+    keywords = json.loads(result.content)["keywords"]
+    translation = json.loads(result.content)["translation"]
+    logger.debug(f"\n### Keywords: [{keywords}] \n### Translation: [{translation}]")
     return {
             "ori_prompt": ori_prompt, 
-            "ind_prompt": ori_prompt, 
-            "keywords": result.content,
+            "ind_prompt": translation, 
+            "keywords": keywords,
             "mysql_list": [],
             "chroma_list": [],
             "combined_list": [],

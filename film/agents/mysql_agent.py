@@ -25,7 +25,7 @@ def mysql_agent(state: State):
     resultset = cursor.fetchall()
     
     # Normalize score
-    max_mysql_score = max(rs["score"] for rs in resultset)
+    max_mysql_score = max(rs["score"] for rs in resultset) if resultset else 0
     logger.debug(f"### Max mysql score: [{max_mysql_score}]")
 
     film_list = list()
