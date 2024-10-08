@@ -14,14 +14,14 @@ def mysql_agent(state: State):
     qry = f"""
             SELECT
                 film_id
-                , MATCH(title, description) AGAINST('{keywords}') AS score
+                , MATCH(title, description) AGAINST(%s) AS score
             FROM film_indonesia
-            WHERE MATCH(title, description) AGAINST('{keywords}')
+            WHERE MATCH(title, description) AGAINST(%s)
             LIMIT 5
             """
     logger.debug(f"### Natural language query : {qry}")
 
-    cursor.execute(qry)    
+    cursor.execute(qry, (keywords, keywords))    
     resultset = cursor.fetchall()
     
     # Normalize score
