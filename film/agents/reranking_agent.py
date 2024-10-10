@@ -22,6 +22,7 @@ def reranking_agent(state: State):
     chroma_results_dict = {item["item_id"] : item["score"] for item in chroma_results}
 
     # Combine scores using a set of all unique IDs
+    logger.info(f"### Combining results MySQL [{len(mysql_results)}] Chroma [{len(mysql_results)}]")
     combined_scores = []
     for mysql_item in mysql_results:
         chroma_score = chroma_results_dict.get(mysql_item["item_id"], 0)  

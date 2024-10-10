@@ -21,10 +21,10 @@ def keyword_agent(state: State):
                 "system",
                 """
                 I am running a movie database service in Indonesian language where user can search movie based on prompt they entered.
-                You will be a prompt assistant whose job is to generate related keywords within the context of user prompt.
-                Take your time to understand the prompt properly before generating keywords.
+                You will be a prompt assistant whose job is to generate synonyms of the main keywords in user prompt.
+                Take your time to understand the prompt properly before generating synonyms.
                 Take into account whether the prompt is asking about overall movie theme or just part of it.
-                The keywords is comma separated text, which must be related to the prompt.                
+                The keywords is comma separated text.                
 
                 Reminder:
                 - The keywords should not make the context broader.
@@ -38,7 +38,7 @@ def keyword_agent(state: State):
             (            
                 "human", 
                 """
-                Given the prompt: {ori_prompt}, generate comma separated keywords very closely related with that context.                
+                Given the prompt: {ori_prompt}, generate comma separated synonyms of the main keywords in that context.                
                 Return JSON with two two keys, 
                 keywords: keywords extracted. 
                 And a key, translation, user prompt translated into Indonesian language if necessary, if not just the original prompt.                

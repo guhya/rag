@@ -19,7 +19,7 @@ def mysql_agent(state: State):
             WHERE MATCH(title, description) AGAINST(%s)
             LIMIT 5
             """
-    logger.debug(f"### Natural language query : {qry}")
+    logger.info(f"### MySQL Natural language query : {qry}")
 
     cursor.execute(qry, (keywords, keywords))    
     resultset = cursor.fetchall()

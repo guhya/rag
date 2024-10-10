@@ -12,7 +12,7 @@ def chroma_agent(state: State):
     
     # Search the DB.
     k = 10
-    logger.debug(f"### Querying vector stores with top [{k}] : {keywords}")
+    logger.info(f"### Querying vector stores with top [{k}] : {keywords}")
     results = db.similarity_search_with_score(keywords, k)
 
     # Create a list of result

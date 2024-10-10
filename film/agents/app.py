@@ -58,8 +58,8 @@ builder.add_node("evaluation_agent", evaluation_agent)
 
 builder.add_edge("__start__", "keyword_agent")
 builder.add_edge("keyword_agent", "mysql_agent")
-builder.add_edge("mysql_agent", "chroma_agent")
-builder.add_edge("chroma_agent", "reranking_agent")
+builder.add_edge("keyword_agent", "chroma_agent")
+builder.add_edge(["chroma_agent", "mysql_agent"], "reranking_agent")
 builder.add_edge("reranking_agent", "evaluation_agent")
 builder.add_edge("evaluation_agent", "__end__")
 
