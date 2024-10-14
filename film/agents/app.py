@@ -79,4 +79,4 @@ def agent_rag(user_prompt: str):
     for output in app.stream(inputs, config, stream_mode="values"):
         response = output
 
-    return response["result_list"]
+    return response["evaluation"]

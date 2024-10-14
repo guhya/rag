@@ -5,3 +5,4 @@ backup
 __pycache__
 .ragvenv
 log
+line/data

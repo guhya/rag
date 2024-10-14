@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def keyword_agent(state: State):
     # llama3.2:3b-instruct-q8_0
     # llama3.1:8b-instruct-q8_0
-    prompt_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0.5, format="json")
+    prompt_llm = ChatOllama(model="llama3.1:8b-instruct-q8_0", temperature = 0, format="json")
     agent_prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -22,14 +22,11 @@ def keyword_agent(state: State):
                 """
                 I am running a movie database service in Indonesian language where user can search movie based on prompt they entered.
                 You will be a prompt assistant whose job is to generate synonyms of the main keywords in user prompt.
-                Take your time to understand the prompt properly before generating synonyms.
-                Take into account whether the prompt is asking about overall movie theme or just part of it.
-                The keywords is comma separated text.                
 
                 Reminder:
-                - The keywords should not make the context broader.
-                - The keywords should not contains 'movie' or 'film'.
-                - Make sure all keywords are in Indonesian language.            
+                - The synonyms should not make the context broader.
+                - The synonyms should not contains 'movie' or 'film'.
+                - Make sure all synonyms are in Indonesian language.            
                 - Return in plain text like for example: cantik, penyanyi, musik, pertunjukan
                 
                 Current time: {time}.
@@ -38,9 +35,9 @@ def keyword_agent(state: State):
             (            
                 "human", 
                 """
-                Given the prompt: {ori_prompt}, generate comma separated synonyms of the main keywords in that context.                
+                Given the prompt: {ori_prompt}, identify the main keywords about the movie in Indonesian.                
                 Return JSON with two two keys, 
-                keywords: keywords extracted. 
+                keywords: synonyms extracted. 
                 And a key, translation, user prompt translated into Indonesian language if necessary, if not just the original prompt.                
                 """
             )
